@@ -1,0 +1,16 @@
+<table class="table table-striped table-bordered table-hover">
+	<tr>
+		<th>Key</th>
+	{% for numeral in progressions.0.input_numerals  %}
+		<th>{{ numeral }}</th>
+	{% endfor %}
+	</tr>
+{% for prog in progressions|slice:"1:" %}
+	<tr>
+		<td>{{ prog.key }}</td>
+	{% for chord in prog.chords %}
+		<td>{{ chord }}</td>
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>

@@ -1,0 +1,99 @@
+{% extends 'chords/base.html' %}
+
+{% block content %}
+<div class="container">
+	<div class="header">
+		<h3 class="text-muted">What Chords?</h3>
+	</div>
+
+	<div class="jumbotron">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<form method="POST" class="form" id="prog-form">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="prog-in">Your progression:</label>
+						<div class="input-group">
+							<input id="prog-in" maxlength="50" name="prog" required="" type="text"
+								placeholder="e.g. I-V-vi-IV or 1 5 6 4" 
+								class="form-control input-lg">
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-primary btn-lg">
+									<span class="glyphicon glyphicon-ok"></span>
+								</button>
+							</span>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<div id="error"></div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div id="results">
+				<table class="table table-striped table-bordered table-hover">
+					<tbody>
+						<tr><th>Key</th><th>I</th><th>V</th><th>vi</th><th>IV</th></tr>
+						<tr><td>C</td><td>C</td><td>G</td><td>Am</td><td>F</td></tr>
+						<tr><td>G</td><td>G</td><td>D</td><td>Em</td><td>C</td></tr>
+						<tr><td>D</td><td>D</td><td>A</td><td>Bm</td><td>G</td></tr>
+						<tr><td>A</td><td>A</td><td>E</td><td>F#m</td><td>D</td></tr>
+						<tr><td>E</td><td>E</td><td>B</td><td>C#m</td><td>A</td></tr>
+						<tr><td>B</td><td>B</td><td>F#</td><td>G#m</td><td>E</td></tr>
+						<tr><td>F#</td><td>F#</td><td>C#</td><td>D#m</td><td>B</td></tr>
+						<tr><td>Db</td><td>Db</td><td>Ab</td><td>Bbm</td><td>Gb</td></tr>
+						<tr><td>Ab</td><td>Ab</td><td>Eb</td><td>Fm</td><td>Db</td></tr>
+						<tr><td>Eb</td><td>Eb</td><td>Bb</td><td>Cm</td><td>Ab</td></tr>
+						<tr><td>Bb</td><td>Bb</td><td>F</td><td>Gm</td><td>Eb</td></tr>
+						<tr><td>F</td><td>F</td><td>C</td><td>Dm</td><td>Bb</td></tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	var form = $('#prog-form');
+	var progInput = form.find('#prog-in');
+
+	var error = $('#error');
+	var results = $('#results');
+
+	form.submit(function (event) {
+		event.preventDefault();
+		// TODO - VALIDATION
+		$.ajax({
+			type: 'post',
+            url: form.attr('action'),
+            data: form.serialize(),
+            success: function (data) {
+            	results.html(data);
+            },
+            error: function(data) {
+            	if(data['status'] === 400) {
+	            	error.html("<div class='alert alert-warning alert-dismisssable' data-alert>"+
+			            	data['responseText'] + 
+			            	"<a href='#' class='close' data-dismiss='alert'>&times;</a></div>");
+            	} else {
+	            	error.html(" \
+			        	<div class='alert alert-danger alert-dismisssable' data-alert> \
+			            	Oops! We have encountered an error. Please try again later. \
+			            	<a href='#' class='close' data-dismiss='alert'>&times;</a> \
+			        	</div>");
+            	}
+
+            	// TODO: proper error loggging ... :D 
+            }
+		});
+		return false;
+	});
+}); 
+</script>
+{% endblock %}
